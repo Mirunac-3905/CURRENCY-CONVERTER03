@@ -1,26 +1,23 @@
-# Stage 1: Build
+# -------- Build Stage --------
 FROM maven:3.9.6-eclipse-temurin-21 AS build
-
 WORKDIR /app
 
-# Copy only pom.xml and download dependencies first (cache efficient)
-COPY pom.xml . 
-RUN mvn dependency:go-offline
-
-# Now copy all source code
+# Copy everything to the container
 COPY . .
 
-# Build the application
-RUN mvn clean package -DskipTests
+# Make wrapper executable and build the app
+RUN chmod +x mvnw && ./mvnw clean package -DskipTests
 
-# Stage 2: Run
-FROM openjdk:17-jdk-slim
-
+# -------- Run Stage --------
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copy the built jar/war from the build stage
-COPY --from=build /app/target/*.war app.war
+# Copy the jar from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose the port used by Spring Boot
+EXPOSE 8081
 
 # Run the application
-CMD ["java", "-jar", "app.war"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
 
