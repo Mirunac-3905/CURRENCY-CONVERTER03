@@ -11,7 +11,7 @@
 	<groupId>com.api.currency</groupId>
 	<artifactId>currency</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>currency</name>
 	<description>project for Spring Boot</description>
 	<properties>
